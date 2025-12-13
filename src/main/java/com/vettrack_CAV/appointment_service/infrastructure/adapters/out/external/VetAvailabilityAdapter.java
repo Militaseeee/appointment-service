@@ -46,7 +46,7 @@ public class VetAvailabilityAdapter implements VetAvailabilityExternalPort {
             // Esperamos una respuesta como: { "disponible": true, ... }
             AvailabilityResponse response = restTemplate.postForObject(url, requestEntity, AvailabilityResponse.class);
 
-            return response != null && response.isDisponible();
+            return response != null && response.isAvailable();
 
         } catch (Exception e) {
             // Si el servicio externo falla o está caído, asumimos que NO está disponible por seguridad
@@ -59,13 +59,13 @@ public class VetAvailabilityAdapter implements VetAvailabilityExternalPort {
     // Clase interna auxiliar para mapear la respuesta del Mock
     // Respuesta esperada: { "veterinarioId": 22, "disponible": true, "motivo": "..." }
     private static class AvailabilityResponse {
-        private boolean disponible;
+        private boolean available;
 
-        public boolean isDisponible() {
-            return disponible;
+        public boolean isAvailable() {
+            return available;
         }
-        public void setDisponible(boolean disponible) {
-            this.disponible = disponible;
+        public void setAvailable(boolean available) {
+            this.available = available;
         }
     }
 }

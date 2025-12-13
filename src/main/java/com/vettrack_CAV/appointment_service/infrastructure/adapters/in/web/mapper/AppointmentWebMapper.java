@@ -14,7 +14,7 @@ public interface AppointmentWebMapper {
 
     // Request -> Domain
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "reason", ignore = true) // estado <_--- HAY QUE VER
+//    @Mapping(target = "reason") // estado <_--- HAY QUE VER
     @Mapping(target = "diagnosis", ignore = true)
     @Mapping(source = "petId", target = "pet.id")
     @Mapping(source = "vetId", target = "vet.id")

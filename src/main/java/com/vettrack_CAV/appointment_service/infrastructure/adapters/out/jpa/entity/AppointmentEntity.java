@@ -23,11 +23,11 @@ public class AppointmentEntity {
     private Long id;
 
     // Lazy para rendimiento
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vet_id")
     private VetEntity vet;
 
