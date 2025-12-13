@@ -16,5 +16,5 @@ public class AppointmentResponse {
 
     // Podemos devolver objetos anidados simples o solo nombres
     private PetResponse pet;
-    private String VetName;
+    private String vetName;
 }

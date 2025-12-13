@@ -5,20 +5,24 @@ import com.vettrack_CAV.appointment_service.domain.exception.ResourceNotFoundExc
 import com.vettrack_CAV.appointment_service.domain.model.Appointment;
 import com.vettrack_CAV.appointment_service.domain.model.Pet;
 import com.vettrack_CAV.appointment_service.domain.model.StateAppointment;
+import com.vettrack_CAV.appointment_service.domain.model.Vet;
 import com.vettrack_CAV.appointment_service.domain.ports.in.appointment.CreateAppointmentUseCase;
 import com.vettrack_CAV.appointment_service.domain.ports.out.AppointmentRepositoryPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.PetRepositoryPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.VetAvailabilityExternalPort;
+import com.vettrack_CAV.appointment_service.domain.ports.out.VetRepositoryPort;
 
 public class CreateAppointmentUseCaseImpl implements CreateAppointmentUseCase {
 
     private final AppointmentRepositoryPort appointmentRepositoryPort;
     private final PetRepositoryPort petRepositoryPort;
+    private final VetRepositoryPort vetRepositoryPort;
     private final VetAvailabilityExternalPort vetAvailabilityExternalPort;
 
-    public CreateAppointmentUseCaseImpl(AppointmentRepositoryPort appointmentRepositoryPort, PetRepositoryPort petRepositoryPort, VetAvailabilityExternalPort vetAvailabilityExternalPort) {
+    public CreateAppointmentUseCaseImpl(AppointmentRepositoryPort appointmentRepositoryPort, PetRepositoryPort petRepositoryPort, VetRepositoryPort vetRepositoryPort, VetAvailabilityExternalPort vetAvailabilityExternalPort) {
         this.appointmentRepositoryPort = appointmentRepositoryPort;
         this.petRepositoryPort = petRepositoryPort;
+        this.vetRepositoryPort = vetRepositoryPort;
         this.vetAvailabilityExternalPort = vetAvailabilityExternalPort;
     }
 
@@ -30,6 +34,14 @@ public class CreateAppointmentUseCaseImpl implements CreateAppointmentUseCase {
         if (!Boolean.TRUE.equals(pet.getActive())) {
             throw new BusinessException("The pet is not active");
         }
+
+        appointment.setPet(pet);
+
+        Vet vet = vetRepositoryPort.findById(appointment.getVet().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Vet with ID " + appointment.getVet().getId() + " not found"));
+
+        appointment.setVet(vet);
 
         appointment.setStateAppointment(StateAppointment.PENDING);
 

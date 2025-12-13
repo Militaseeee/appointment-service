@@ -22,6 +22,7 @@ public interface AppointmentWebMapper {
 
     // Domain -> Response
     @Mapping(source = "vet.name", target = "vetName")
+    @Mapping(source = "pet", target = "pet")
     AppointmentResponse toResponse(Appointment domain);
 
     List<AppointmentResponse> toResponseList(List<Appointment> domainList);

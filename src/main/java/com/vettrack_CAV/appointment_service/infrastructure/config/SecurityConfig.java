@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     // Whitelist para permitir acceso a Swagger/OpenAPI
     private static final String[] SWAGGER_WHITELIST = {
             "/swagger-ui/**",

@@ -26,10 +26,12 @@ public class AppointmentUseCaseConfig {
     public CreateAppointmentUseCase createAppointmentUseCase(
             AppointmentRepositoryPort appointmentRepositoryPort,
             PetRepositoryPort petRepositoryPort,
+            VetRepositoryPort vetRepositoryPort,
             VetAvailabilityExternalPort vetAvailabilityExternalPort) {
         return new CreateAppointmentUseCaseImpl(
                 appointmentRepositoryPort,
                 petRepositoryPort,
+                vetRepositoryPort,
                 vetAvailabilityExternalPort
         );
     }
