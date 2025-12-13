@@ -42,3 +42,10 @@ CREATE TABLE appointment (
     CONSTRAINT fk_appointment_diagnosis
         FOREIGN KEY (diagnosis_id) REFERENCES diagnosis(id)
 );
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL
+);

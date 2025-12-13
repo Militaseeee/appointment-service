@@ -9,4 +9,7 @@ public interface AppointmentRepositoryPort {
     Appointment save(Appointment appointment);
     Optional<Appointment> findById(Long id);
     List<Appointment> findAll();
+
+    List<Appointment> findAllByPetOwner(String username); // Para el Dueño
+    List<Appointment> findAllByVet(String username);      // Para el Veterinario
 }
