@@ -20,8 +20,6 @@ public class AppointmentUseCaseConfig {
         return new RestTemplate();
     }
 
-    // --- CASOS DE USO DE APPOINTMENT (CITA) ---
-
     @Bean
     public CreateAppointmentUseCase createAppointmentUseCase(
             AppointmentRepositoryPort appointmentRepositoryPort,
@@ -38,8 +36,13 @@ public class AppointmentUseCaseConfig {
 
     @Bean
     public GetAllAppointmentUseCase getAllAppointmentUseCase(
-            AppointmentRepositoryPort appointmentRepositoryPort) {
-        return new GetAllAppointmentUseCaseImpl(appointmentRepositoryPort);
+            AppointmentRepositoryPort appointmentRepositoryPort,
+            UserRepositoryPort userRepositoryPort) {
+
+        return new GetAllAppointmentUseCaseImpl(
+                appointmentRepositoryPort,
+                userRepositoryPort
+        );
     }
 
     @Bean

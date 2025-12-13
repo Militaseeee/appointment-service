@@ -31,21 +31,20 @@ CREATE TABLE appointment (
     state_appointment VARCHAR(50),
     pet_id BIGINT NOT NULL,
     vet_id BIGINT NOT NULL,
-    diagnosis_id BIGINT,
+    diagnosis_id BIGINT UNIQUE,
 
     CONSTRAINT fk_appointment_pet
-        FOREIGN KEY (pet_id) REFERENCES pet(id),
-    CONSTRAINT fk_appointment_vet
-        FOREIGN KEY (vet_id) REFERENCES vet(id),
-    CONSTRAINT uk_appointment_diagnosis_id
-        UNIQUE (diagnosis_id),
-    CONSTRAINT fk_appointment_diagnosis
-        FOREIGN KEY (diagnosis_id) REFERENCES diagnosis(id)
+            FOREIGN KEY (pet_id) REFERENCES pet(id),
+        CONSTRAINT fk_appointment_vet
+            FOREIGN KEY (vet_id) REFERENCES vet(id),
+        CONSTRAINT fk_appointment_diagnosis
+            FOREIGN KEY (diagnosis_id) REFERENCES diagnosis(id)
 );
 
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    identification VARCHAR(50),
     role VARCHAR(50) NOT NULL
 );

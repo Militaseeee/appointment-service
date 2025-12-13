@@ -25,15 +25,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(UserRegisterCommand command) {
         if (userRepositoryPort.existsByUsername(command.username())) {
-            throw new RuntimeException("El nombre de usuario ya existe"); // Usa tu ResourceConflictException si la tienes
+            throw new RuntimeException("El usuario ya existe");
         }
 
-        UserModel newUser = new UserModel();
-        newUser.setUsername(command.username());
-        newUser.setPassword(passwordEncoder.encode(command.password())); // Encriptamos aquí
-        newUser.setRole(command.role());
+        UserModel user = new UserModel();
+        user.setUsername(command.username());
+        user.setPassword(passwordEncoder.encode(command.password()));
+        user.setRole(command.role());
 
-        userRepositoryPort.save(newUser);
+        user.setIdentification(command.identification());
+
+        userRepositoryPort.save(user);
     }
 
     @Override

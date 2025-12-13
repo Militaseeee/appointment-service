@@ -5,5 +5,6 @@ import com.vettrack_CAV.appointment_service.domain.model.Role;
 public record UserRegisterCommand(
         String username,
         String password,
+        String identification,
         Role role
 ) {}

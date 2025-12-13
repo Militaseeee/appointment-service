@@ -21,16 +21,17 @@ public class UserJpaAdapter implements UserRepositoryPort {
                 userModel.getId(),
                 userModel.getUsername(),
                 userModel.getPassword(),
+                userModel.getIdentification(),
                 userModel.getRole()
         );
         UserEntity saved = userJpaRepository.save(entity);
-        return new UserModel(saved.getId(), saved.getUsername(), saved.getPassword(), saved.getRole());
+        return new UserModel(saved.getId(), saved.getUsername(), saved.getPassword(), saved.getIdentification(), saved.getRole());
     }
 
     @Override
     public Optional<UserModel> findByUsername(String username) {
         return userJpaRepository.findByUsername(username)
-                .map(entity -> new UserModel(entity.getId(), entity.getUsername(), entity.getPassword(), entity.getRole()));
+                .map(entity -> new UserModel(entity.getId(), entity.getUsername(), entity.getPassword(), entity.getIdentification(), entity.getRole()));
     }
 
     @Override

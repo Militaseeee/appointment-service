@@ -35,4 +35,17 @@ public class AppointmentJpaAdapter implements AppointmentRepositoryPort {
     public List<Appointment> findAll() {
         return appointmentMapper.toDomainList(appointmentJpaRepository.findAll());
     }
+
+    @Override
+    public List<Appointment> findAllByPetOwner(String identification) {
+        // Llama a la query personalizada que busca por ownerId (cédula)
+        List<AppointmentEntity> entities = appointmentJpaRepository.findByPetOwnerId(identification);
+        return appointmentMapper.toDomainList(entities);
+    }
+
+    @Override
+    public List<Appointment> findAllByVet(String username) {
+        List<AppointmentEntity> entities = appointmentJpaRepository.findByVetUsername(username);
+        return appointmentMapper.toDomainList(entities);
+    }
 }

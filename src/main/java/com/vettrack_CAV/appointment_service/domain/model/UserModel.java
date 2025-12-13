@@ -5,15 +5,17 @@ public class UserModel {
     private Long id;
     private String username;
     private String password;
+    private String identification;
     private Role role;
 
     public UserModel() {
     }
 
-    public UserModel(Long id, String username, String password, Role role) {
+    public UserModel(Long id, String username, String password, String identification, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.identification = identification;
         this.role = role;
     }
 
@@ -39,6 +41,14 @@ public class UserModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
     }
 
     public Role getRole() {
