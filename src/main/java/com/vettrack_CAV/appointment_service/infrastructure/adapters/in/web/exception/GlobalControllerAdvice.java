@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j; // <--- Necesario para Logging
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException; // <--- Seguridad
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -60,6 +61,21 @@ public class GlobalControllerAdvice {
         problemDetail.setType(URI.create("https://vettrack.com/errors/validation"));
         problemDetail.setProperty("timestamp", Instant.now());
         problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
+    }
+
+    // (401) credenciales invalidas
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request) {
+        // La métrica 'security.auth.failure.count' se incrementó antes de llegar aquí.
+        log.warn("Authentication failed: {}", ex.getMessage());
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid authentication credentials (Incorrect username/password)");
+        problemDetail.setTitle("Authentication Failed");
+        problemDetail.setType(URI.create("https://vettrack.com/errors/unauthorized"));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+
         return problemDetail;
     }
 

@@ -1,12 +1,16 @@
 package com.vettrack_CAV.appointment_service.infrastructure.config;
 
 import com.vettrack_CAV.appointment_service.infrastructure.security.JwtAuthenticationFilter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,8 +37,9 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/swagger-resources",
             "/webjars/**",
-            "/auth/**",      // <--- IMPORTANTE: Permite acceso a tus endpoints si usas /auth
-            "/api/auth/**"   // <--- IMPORTANTE: Permite acceso si usas /api/auth
+            "/auth/**",
+            "/api/auth/**",
+            "/actuator/**"
     };
 
     @Bean
@@ -73,5 +78,34 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationMetrics authenticationMetrics(MeterRegistry meterRegistry) {
+        return new AuthenticationMetrics(meterRegistry);
+    }
+}
+
+// Clase interna o externa para manejar las métricas de autenticación
+class AuthenticationMetrics {
+
+    private final MeterRegistry meterRegistry;
+
+    public AuthenticationMetrics(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        // Inicializa contadores
+        meterRegistry.counter("security.auth.success.count");
+        meterRegistry.counter("security.auth.failure.count");
+    }
+
+    @EventListener
+    public void onSuccess(AuthenticationSuccessEvent event) {
+        meterRegistry.counter("security.auth.success.count").increment();
+    }
+
+    @EventListener
+    public void onFailure(AuthenticationFailureBadCredentialsEvent event) {
+        // Captura fallas de credenciales (la más común)
+        meterRegistry.counter("security.auth.failure.count").increment();
     }
 }

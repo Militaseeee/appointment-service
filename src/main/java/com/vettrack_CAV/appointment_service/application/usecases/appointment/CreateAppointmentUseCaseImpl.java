@@ -11,6 +11,7 @@ import com.vettrack_CAV.appointment_service.domain.ports.out.AppointmentReposito
 import com.vettrack_CAV.appointment_service.domain.ports.out.PetRepositoryPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.VetAvailabilityExternalPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.VetRepositoryPort;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 
 @Transactional
@@ -20,17 +21,28 @@ public class CreateAppointmentUseCaseImpl implements CreateAppointmentUseCase {
     private final PetRepositoryPort petRepositoryPort;
     private final VetRepositoryPort vetRepositoryPort;
     private final VetAvailabilityExternalPort vetAvailabilityExternalPort;
+    private final MeterRegistry meterRegistry; // Declaración correcta
 
-    public CreateAppointmentUseCaseImpl(AppointmentRepositoryPort appointmentRepositoryPort, PetRepositoryPort petRepositoryPort, VetRepositoryPort vetRepositoryPort, VetAvailabilityExternalPort vetAvailabilityExternalPort) {
+    public CreateAppointmentUseCaseImpl(
+            AppointmentRepositoryPort appointmentRepositoryPort,
+            PetRepositoryPort petRepositoryPort,
+            VetRepositoryPort vetRepositoryPort,
+            VetAvailabilityExternalPort vetAvailabilityExternalPort,
+            MeterRegistry meterRegistry // Inyección correcta
+    ) {
         this.appointmentRepositoryPort = appointmentRepositoryPort;
         this.petRepositoryPort = petRepositoryPort;
         this.vetRepositoryPort = vetRepositoryPort;
         this.vetAvailabilityExternalPort = vetAvailabilityExternalPort;
+        this.meterRegistry = meterRegistry;
+
+        // Inicialización (Opcional, pero bueno para asegurar que existe la métrica desde el inicio)
+        meterRegistry.counter("appointment.confirmed.total");
     }
 
     @Override
     public Appointment create(Appointment appointment) {
-            Pet pet = petRepositoryPort.findById(appointment.getPet().getId())
+        Pet pet = petRepositoryPort.findById(appointment.getPet().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Pet with ID " + appointment.getPet().getId() + " not found"));
 
         if (!Boolean.TRUE.equals(pet.getActive())) {
@@ -55,6 +67,10 @@ public class CreateAppointmentUseCaseImpl implements CreateAppointmentUseCase {
 
         if (available) {
             appointment.setStateAppointment(StateAppointment.CONFIRMED);
+
+            // --- CÓDIGO CORREGIDO: Incrementar solo si se confirma ---
+            meterRegistry.counter("appointment.confirmed.total").increment();
+            // --------------------------------------------------------
         } else {
             appointment.setStateAppointment(StateAppointment.REJECTED);
         }

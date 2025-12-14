@@ -7,6 +7,7 @@ import com.vettrack_CAV.appointment_service.domain.ports.in.appointment.*;
 import com.vettrack_CAV.appointment_service.domain.ports.in.pet.*;
 import com.vettrack_CAV.appointment_service.domain.ports.in.vet.*;
 import com.vettrack_CAV.appointment_service.domain.ports.out.*;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +26,15 @@ public class AppointmentUseCaseConfig {
             AppointmentRepositoryPort appointmentRepositoryPort,
             PetRepositoryPort petRepositoryPort,
             VetRepositoryPort vetRepositoryPort,
-            VetAvailabilityExternalPort vetAvailabilityExternalPort) {
+            VetAvailabilityExternalPort vetAvailabilityExternalPort,
+            MeterRegistry meterRegistry
+    ) {
         return new CreateAppointmentUseCaseImpl(
                 appointmentRepositoryPort,
                 petRepositoryPort,
                 vetRepositoryPort,
-                vetAvailabilityExternalPort
+                vetAvailabilityExternalPort,
+                meterRegistry
         );
     }
 
