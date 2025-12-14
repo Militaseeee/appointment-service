@@ -1,5 +1,6 @@
 package com.vettrack_CAV.appointment_service.infrastructure.adapters.in.web.dto.request;
 
+import jakarta.validation.constraints.FutureOrPresent; // <--- IMPORTANTE
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class AppointmentRequest {
     private Long vetId;
 
     @NotNull(message = "Date is required")
+    @FutureOrPresent(message = "Date cannot be in the past")
     private LocalDate date;
 
     @NotNull(message = "Time is required")
