@@ -11,7 +11,9 @@ import com.vettrack_CAV.appointment_service.domain.ports.out.AppointmentReposito
 import com.vettrack_CAV.appointment_service.domain.ports.out.PetRepositoryPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.VetAvailabilityExternalPort;
 import com.vettrack_CAV.appointment_service.domain.ports.out.VetRepositoryPort;
+import jakarta.transaction.Transactional;
 
+@Transactional
 public class CreateAppointmentUseCaseImpl implements CreateAppointmentUseCase {
 
     private final AppointmentRepositoryPort appointmentRepositoryPort;
