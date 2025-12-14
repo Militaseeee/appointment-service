@@ -1,13 +1,56 @@
+version: '3.8'
+
 services:
+  # BD PostgreSQL
   postgres:
     image: 'postgres:15-alpine'
+    container_name: postgres-db
+    restart: always
     environment:
-      - 'POSTGRES_DB=vettrack_db'
-      - 'POSTGRES_PASSWORD=postgres'
-      - 'POSTGRES_USER=postgres'
+      POSTGRES_DB: vettrack_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck: # Asegura que la DB esté lista antes que los servicios dependientes
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Mock de Disponibilidad de Vet
+  vet-availability-mock-service:
+    build:
+      context: ./vet-availability-mock-service
+      dockerfile: Dockerfile
+    container_name: vet-availability-mock
+    ports:
+      - "8081:8081"
+  # Appointment Service (Tu microservicio principal)
+  appointment-service:
+    build:
+      context: ./appointment-service
+      dockerfile: Dockerfile
+    container_name: appointment-service
+    ports:
+      - "8080:8080"
+    environment:
+      # Conex a la DB: usa el nombre del servicio (postgres) y su puerto interno (5432)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/vettrack_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # URL del Mock Service
+      VET_AVAILABILITY_URL: http://vet-availability-mock-service:8081/availability
+
+    depends_on:
+      # El servicio DEBE esperar a que la DB para Flyway
+      postgres:
+        condition: service_healthy
+      # Espera a que el mock este corriendo
+      vet-availability-mock-service:
+        condition: service_started
+# Volumenes para persistencia de datos
 volumes:
   postgres_data:
